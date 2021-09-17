@@ -1,7 +1,6 @@
 # 파일을 만들어서 그대로 실행시킵니다!!
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 from pymongo import MongoClient
-import requests
 app = Flask(__name__)
 
 client = MongoClient("mongodb://localhost:27017/")
@@ -39,3 +38,9 @@ market=db.stocks.distinct( "market")
 sector=db.stocks.distinct( "sector")
 tag=db.stocks.distinct( "tag")
 print(market,sector,tag)
+
+@app.route('/api/list', methods=['GET'])
+def show_data():
+    sample_receive = request.args.get('ma')
+    print(sample_receive)
+    return jsonify({'msg': 'list 연결되었습니다!'})

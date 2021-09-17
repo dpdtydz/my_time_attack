@@ -115,6 +115,16 @@
                 }
             })
         }
+        function show_data() {
+      $.ajax({
+          type: 'GET',
+          url: '/api/list?sample_give=샘플데이터',
+          data: {},
+          success: function (response) {
+              alert(response['msg']);
+          }
+      });
+  }
     </script>
 
 </head>
