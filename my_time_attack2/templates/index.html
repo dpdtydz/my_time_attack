@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
+    <script src="/js/jquery.twbsPagination.js"></script> <!-- jQuery -->
 
     <!-- JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -31,6 +32,14 @@
     <style type="text/css">
         * {
             font-family: "Stylish", sans-serif;
+        }
+
+        .paging-div {
+            padding: 15px 0 5px 10px;
+            display: table;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
         }
 
         .comment {
@@ -57,26 +66,43 @@
         $(document).ready(function () {
             $("#cards-box").html("");
             dataPerPage = $("#dataPerPage").val();
+            window.pagObj = $('#pagination').twbsPagination({ totalPages: [[${dataListPage.totalPages}]],
+                // 전체 페이지
+                startPage: parseInt([[${dataListPage.number}]] + 1),
+                // 시작(현재) 페이지
+               visiblePages: 10,
+                // 최대로 보여줄 페이지
+                prev: "‹", //Previous Button Label
+                next: "›", //Next Button Label
+                first: '«', //First Button Label
+                last: '»', //Last Button Label
+                onPageClick: function (event, page) { //Page Click event
+                console.info("current page : " + page);
+            }
+            }).on('page', function (event, page) { searchDataList(page); });
+
             showArticles();
         });
-        function searchs(idx){
+
+        function searchs(idx) {
             $('#table>tbody:last').empty();
-            let search_title= $('#search').val()
+            let search_title = $('#search').val()
             $.ajax({
-                type:"POST",
-                url:'/article',
-                data:{title: idx},
-                success: function (response){
-                    let find_title=response['articles']
-                    for(let i=0;i<find_title.length;i++){
-                        let title= find_title[i][title];
-                        let temp_html=`<tr>
+                type: "POST",
+                url: '/article',
+                data: {title: idx},
+                success: function (response) {
+                    let find_title = response['articles']
+                    for (let i = 0; i < find_title.length; i++) {
+                        let title = find_title[i][title];
+                        let temp_html = `<tr>
                         <th scope="row">${title}</th></tr>`
                         $('#post-box').append(temp_html)
                     }
                 }
             })
         }
+
         function openClose() {
             if ($("#post-box").css("display") == "block") {
                 $("#post-box").hide();
@@ -152,7 +178,7 @@
             });
         }
 
- function getdata() {
+        function getdata() {
             let totalData; //총 데이터 수
             let dataPerPage; //한 페이지에 나타낼 글 수
             let pageCount = 5; //페이징에 나타낼 페이지 수
@@ -207,31 +233,33 @@
                 })
             }
         }
-//현재 페이지(currentPage)와 페이지당 글 개수(dataPerPage) 반영
-function displayData(currentPage, dataPerPage) {
 
-  let chartHtml = "";
+        //현재 페이지(currentPage)와 페이지당 글 개수(dataPerPage) 반영
+        function displayData(currentPage, dataPerPage) {
+
+            let chartHtml = "";
 
 //Number로 변환하지 않으면 아래에서 +를 할 경우 스트링 결합이 되어버림..
-  currentPage = Number(currentPage);
-  dataPerPage = Number(dataPerPage);
+            currentPage = Number(currentPage);
+            dataPerPage = Number(dataPerPage);
 
-  for (
-    var i = (currentPage - 1) * dataPerPage;
-    i < (currentPage - 1) * dataPerPage + dataPerPage;
-    i++
-  ) {
-    chartHtml +=
-      "<tr><td>" +
-      dataList[i].d1 +
-      "</td><td>" +
-      dataList[i].d2 +
-      "</td><td>" +
-      dataList[i].d3 +
-      "</td></tr>";
-  }
-  $("#dataTableBody").html(chartHtml);
-}
+            for (
+                var i = (currentPage - 1) * dataPerPage;
+                i < (currentPage - 1) * dataPerPage + dataPerPage;
+                i++
+            ) {
+                chartHtml +=
+                    "<tr><td>" +
+                    dataList[i].d1 +
+                    "</td><td>" +
+                    dataList[i].d2 +
+                    "</td><td>" +
+                    dataList[i].d3 +
+                    "</td></tr>";
+            }
+            $("#dataTableBody").html(chartHtml);
+        }
+
         function showArticles() {
             $.ajax({
                 type: "GET",
@@ -355,7 +383,7 @@ function displayData(currentPage, dataPerPage) {
         <option value="10">10개씩보기</option>
         <option value="15">15개씩보기</option>
     </select>
-    <ul id="pagingul">
+    <ul id="pagination">
         <table class="table">
             <thead>
             <tr>
@@ -396,9 +424,9 @@ function displayData(currentPage, dataPerPage) {
         </div>
     </div>
 </div>
- <input id="search" type="text" class="form-control" placeholder="검색어를 입력해주세요"
-                       aria-label="Username">
-                <button onclick="searchs()" type="button" id="btn-search" class="btn btn-primary">검색</button>
+<input id="search" type="text" class="form-control" placeholder="검색어를 입력해주세요"
+       aria-label="Username">
+<button onclick="searchs()" type="button" id="btn-search" class="btn btn-primary">검색</button>
 </body>
 
 </html>
