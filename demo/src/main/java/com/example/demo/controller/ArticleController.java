@@ -1,10 +1,12 @@
 package com.example.demo.controller;
 
 
+import com.example.demo.Repository.ArticleRepository;
 import com.example.demo.domain.Article;
 import com.example.demo.dto.ArticleCommentRequestDto;
 import com.example.demo.dto.ArticleRequestDto;
 import com.example.demo.service.ArticleService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,7 @@ import java.util.List;
 public class ArticleController {
 
     private final ArticleService articleService;
+    private final ArticleRepository articleRepository;
 
     @PostMapping("/article")
     public Article setArticle(@RequestBody ArticleRequestDto articleRequestDto){
@@ -27,13 +30,14 @@ public class ArticleController {
     }
 
     @GetMapping("/article/{id}")
-    public Article getArticle(@PathVariable Article article){
-        return articleService.getArticle(article);
+    public Article getArticle(@PathVariable Long id){
+        return articleService.getArticle(id);
     }
 
 
     @PostMapping("/article/comment")
-    public void  setArticleComment(@RequestBody ArticleCommentRequestDto articleCommentRequestDto){
-        articleService.setArticleComment(articleCommentRequestDto);
+    public void setArticleComment(@RequestBody ArticleCommentRequestDto commentRequestDto){
+        articleService.setArticleComment(commentRequestDto);
     }
+
 }
